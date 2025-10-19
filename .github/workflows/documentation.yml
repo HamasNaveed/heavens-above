@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm Install
+      - run: npm install
       - name: Build docs (if you have a docs build step)
         run: npm run docs:build || echo "No docs build script; skipping"
       - uses: peaceiris/actions-gh-pages@v4
