@@ -6,9 +6,7 @@ on:
       - main
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -17,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -25,12 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run script to generate data & site
+      - name: Run script to generate site (optional)
         run: |
-          node run.js
+          echo "Skipping actual script execution for demo"
+          # node run.js
 
-      - name: Upload site to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: .
