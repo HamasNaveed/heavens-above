@@ -1,18 +1,17 @@
-name: Deploy Static Site
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -23,13 +22,24 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run script to generate site (optional)
+      - name: Build project (generate static files)
         run: |
-          echo "Skipping actual script execution for demo"
-          # node run.js
+          mkdir -p public
+          echo "<h1>Heavens Above Deployment</h1>" > public/index.html
+          echo "<p>This site was generated and deployed using GitHub Actions.</p>" >> public/index.html
+          echo "<p>Build was being completed successfully on $(date)</p>" >> public/index.html
+          echo "<p>Commit SHA: $GITHUB_SHA</p>" >> public/index.html
+          echo "<p>Branch: $GITHUB_REF_NAME</p>" >> public/index.html
+          echo "<p>Pipeline executed by: $GITHUB_ACTOR</p>" >> public/index.html
+          echo "<hr>" >> public/index.html
+          echo "<h3>Build Logs</h3>" >> public/index.html
+          echo "<pre>" >> public/index.html
+          echo "Installing dependencies..." >> public/index.html
+          npm list >> public/index.html 2>&1 || true
+          echo "</pre>" >> public/index.html
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./public

@@ -1,28 +1,26 @@
-name: Documentation Deploy
+name: Documentation Deployment
 
 on:
   push:
+    branches: [ main ]
     paths:
       - 'docs/**'
-      - '.github/workflows/documentation.yml'
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
 
 jobs:
-  build-docs:
+  deploy-docs:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: npm install
-      - name: Build docs (if you have a docs build step)
-        run: npm run docs:build || echo "No docs build script; skipping"
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build Docs
+      run: |
+        npm install -g docsify-cli
+        docsify init ./docs
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
